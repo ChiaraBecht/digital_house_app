@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/rooms.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,7 +10,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('🏠 Digital House'),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,8 +27,16 @@ class HomeScreen extends StatelessWidget {
             'Choose a room to begin with', 
             style: TextStyle(
               fontSize: 26)
-              )
-              ]),
+              ),
+          SizedBox(height: 30),
+          ...rooms.map(
+            (room) => Text(
+              '${room.icon} ${room.name}',
+              style: const TextStyle(fontSize: 24),
+            ),
+          ),
+              ],
+              ),
           ),
     );
   }
