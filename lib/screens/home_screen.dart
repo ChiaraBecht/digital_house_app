@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/rooms.dart';
+import 'kitchen_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,10 +11,8 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('🏠 Digital House'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+      body: ListView(
+        padding: const EdgeInsets.all(20),
         children: [
           Text(
             'Welcome home!', 
@@ -30,14 +29,28 @@ class HomeScreen extends StatelessWidget {
               ),
           SizedBox(height: 30),
           ...rooms.map(
-            (room) => Text(
-              '${room.icon} ${room.name}',
-              style: const TextStyle(fontSize: 24),
-            ),
+            (room) => Card(
+              child: ListTile(
+                leading: Text(
+                  room.icon,
+                  style: const TextStyle(fontSize: 28),
+                ),
+                title: Text(room.name),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  if (room.id == 'kitchen') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const KitchenScreen(),
+                        ),
+                    );
+                  }
+                },
+              ))
           ),
               ],
               ),
-          ),
-    );
+          );
   }
 }
