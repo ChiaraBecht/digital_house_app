@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/rooms.dart';
 import 'kitchen_screen.dart';
+import '../navigation/room_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -38,12 +39,14 @@ class HomeScreen extends StatelessWidget {
                 title: Text(room.name),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  if (room.id == 'kitchen') {
+                  final builder = roomRoutes[room.id];
+
+                  if (builder != null){
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const KitchenScreen(),
-                        ),
+                        builder: builder,
+                      ),
                     );
                   }
                 },
