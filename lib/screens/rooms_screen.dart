@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import '../models/room.dart';
 
 class RoomScreen extends StatelessWidget {
-  const RoomScreen({super.key});
-  
+  final Room room;
+
+  const RoomScreen({
+    super.key,
+    required this.room,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🍳 Kitchen'),
+        title: Text('${room.icon} ${room.name}'),
       ),
-      body: const Center(
-        child: Text(
-          'Kitchen',
+      body: Center(
+  child: Text(
+    room.name,
           style: TextStyle(fontSize: 30),
         ),
       ),
