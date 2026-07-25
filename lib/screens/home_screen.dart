@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/rooms.dart';
-import 'kitchen_screen.dart';
+import 'rooms_screen.dart';
 import '../navigation/room_routes.dart';
 
 class HomeScreen extends StatelessWidget {
