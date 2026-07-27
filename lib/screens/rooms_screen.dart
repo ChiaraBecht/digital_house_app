@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/room.dart';
+import '../data/storage_units.dart';
 
 class RoomScreen extends StatelessWidget {
   final Room room;
@@ -11,14 +12,31 @@ class RoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final roomStorageUnits = storageUnits
+      .where((unit) => unit.roomId == room.id)
+      .toList();
     return Scaffold(
       appBar: AppBar(
         title: Text('${room.icon} ${room.name}'),
       ),
-      body: Center(
-  child: Text(
-    room.name,
-          style: TextStyle(fontSize: 30),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...roomStorageUnits.map(
+            (roomStorageUnit) => Card(
+              child: ListTile(
+                leading: Text(
+                  roomStorageUnit.icon,
+                  style: const TextStyle(fontSize: 28),
+                ),
+                title: Text(roomStorageUnit.name),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: null,
+              ))
+          ),
+          ],
         ),
       ),
     );
