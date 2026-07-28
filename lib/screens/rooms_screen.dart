@@ -39,6 +39,12 @@ class RoomScreen extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            print('Add Storage Unit');
+          },
+          child: const Icon(Icons.add),
+          ),
     );
   }
 }

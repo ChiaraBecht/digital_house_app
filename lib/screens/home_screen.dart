@@ -49,6 +49,12 @@ class HomeScreen extends StatelessWidget {
           ),
               ],
               ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  debugPrint('Add Room');
+                },
+                child: const Icon(Icons.add),
+                ),
           );
   }
 }
