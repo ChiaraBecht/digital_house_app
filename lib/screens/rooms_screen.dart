@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/room.dart';
 import '../data/storage_units.dart';
+import 'storage_unit_screen.dart';
 
 class RoomScreen extends StatelessWidget {
   final Room room;
@@ -33,7 +34,16 @@ class RoomScreen extends StatelessWidget {
                 ),
                 title: Text(roomStorageUnit.name),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: null,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StorageUnitScreen(
+                        storageUnit: roomStorageUnit,
+                        ),
+                      ),
+                  );
+                },
               ))
           ),
           ],
