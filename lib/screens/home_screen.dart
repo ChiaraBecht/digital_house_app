@@ -1,10 +1,56 @@
+import 'package:digital_house/models/room.dart';
 import 'package:flutter/material.dart';
-import '../data/rooms.dart';
+import '../repositories/room_repository.dart';
 import 'rooms_screen.dart';
+import '../data/room_templates.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final roomRepository = RoomRepository();
+  void _showAddRoomDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('🏠 Add Room'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Choose room type'),
+              ...roomTemplates.map(
+                (template) => ListTile(
+                  leading: Text(
+                    template.icon,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  title: Text(template.name),
+                  onTap: () {
+                    setState(() {
+                      roomRepository.addRoom(
+                        Room(
+                          id: template.id,
+                          name: template.name,
+                          icon: template.icon,
+                        ),
+                      );
+                    });
+
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +74,7 @@ class HomeScreen extends StatelessWidget {
               fontSize: 26)
               ),
           SizedBox(height: 30),
-          ...rooms.map(
+          ...roomRepository.rooms.map(
             (room) => Card(
               child: ListTile(
                 leading: Text(
@@ -51,7 +97,7 @@ class HomeScreen extends StatelessWidget {
               ),
               floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                  debugPrint('Add Room');
+                  _showAddRoomDialog();
                 },
                 child: const Icon(Icons.add),
                 ),
