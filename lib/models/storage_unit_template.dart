@@ -1,15 +1,11 @@
-class StorageUnit {
+class StorageUnitTemplate {
   final String id;
   final String name;
-  final String type;
   final String icon;
-  final String roomId;
 
-  const StorageUnit({
+  const StorageUnitTemplate({
     required this.id,
     required this.name,
-    required this.type,
     required this.icon,
-    required this.roomId,
   });
 }

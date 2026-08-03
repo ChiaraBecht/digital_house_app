@@ -1,24 +1,125 @@
 import 'package:flutter/material.dart';
 import '../models/room.dart';
-import '../data/storage_units.dart';
-import 'storage_unit_screen.dart';
+import '../models/storage_unit.dart';
+import '../models/storage_unit_template.dart';
 
-class RoomScreen extends StatelessWidget {
+import '../repositories/storage_unit_repository.dart';
+
+import '../data/storage_unit_templates.dart';
+
+import './storage_unit_screen.dart';
+
+
+class RoomScreen extends StatefulWidget {
   final Room room;
+  final StorageUnitRepository storageUnitRepository;
 
   const RoomScreen({
     super.key,
     required this.room,
+    required this.storageUnitRepository,
   });
 
   @override
+  State<RoomScreen> createState() => _RoomScreenState();
+}
+
+class _RoomScreenState extends State<RoomScreen> {
+  final TextEditingController _storageUnitNameController = TextEditingController();
+
+  void _createStorageUnitFromTemplate(StorageUnitTemplate template) {
+    final name = _storageUnitNameController.text.trim();
+
+    if  (name.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      widget.storageUnitRepository.addStorageUnit(
+        StorageUnit(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          name: name,
+          type: template.id,
+          icon: template.icon,
+          roomId: widget.room.id,
+        ),
+      );
+    });
+  }
+
+  void _showStorageUnitNameDialog(StorageUnitTemplate template) {
+    _storageUnitNameController.text = template.name;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('${template.icon} Name your storage unit'),
+          content: TextField(
+            controller: _storageUnitNameController,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Storage unit name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _createStorageUnitFromTemplate(template);
+                Navigator.pop(context);
+              },
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAddStorageUnitDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Storage Unit'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ...storageUnitTemplates.map(
+                (template) => ListTile(
+                  leading: Text(
+                    template.icon,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  title: Text(template.name),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showStorageUnitNameDialog(template);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final roomStorageUnits = storageUnits
-      .where((unit) => unit.roomId == room.id)
+    final roomStorageUnits = widget.storageUnitRepository.storageUnits
+      .where((unit) => unit.roomId == widget.room.id)
       .toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('${room.icon} ${room.name}'),
+        title: Text('${widget.room.icon} ${widget.room.name}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -51,7 +152,7 @@ class RoomScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print('Add Storage Unit');
+            _showAddStorageUnitDialog();
           },
           child: const Icon(Icons.add),
           ),

@@ -1,4 +1,5 @@
 import 'package:digital_house/models/room.dart';
+import 'package:digital_house/repositories/storage_unit_repository.dart';
 import 'package:flutter/material.dart';
 import '../repositories/room_repository.dart';
 import 'rooms_screen.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final roomRepository = RoomRepository();
+  final storageUnitRepository = StorageUnitRepository();
   final TextEditingController _roomNameController = TextEditingController();
   void _showRoomNameDialog(RoomTemplate template) {
     _roomNameController.text = template.name;
@@ -53,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
   void _createRoomFromTemplate(RoomTemplate template) {
     setState(() {
     roomRepository.addRoom(
@@ -131,7 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RoomScreen(room: room),
+                      builder: (context) => RoomScreen(
+                        room: room,
+                        storageUnitRepository: storageUnitRepository,
+                        ),
                     ),
                   );
                 },
