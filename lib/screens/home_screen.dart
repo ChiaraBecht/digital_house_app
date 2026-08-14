@@ -5,6 +5,7 @@ import '../repositories/room_repository.dart';
 import 'rooms_screen.dart';
 import '../data/room_templates.dart';
 import '../models/room_template.dart';
+import '../repositories/compartment_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final roomRepository = RoomRepository();
   final storageUnitRepository = StorageUnitRepository();
+  final compartmentRepository = CompartmentRepository();
   final TextEditingController _roomNameController = TextEditingController();
   void _showRoomNameDialog(RoomTemplate template) {
     _roomNameController.text = template.name;
@@ -137,6 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => RoomScreen(
                         room: room,
                         storageUnitRepository: storageUnitRepository,
+                        compartmentRepository: compartmentRepository,
                         ),
                     ),
                   );

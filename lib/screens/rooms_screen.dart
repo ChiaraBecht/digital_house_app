@@ -4,6 +4,7 @@ import '../models/storage_unit.dart';
 import '../models/storage_unit_template.dart';
 
 import '../repositories/storage_unit_repository.dart';
+import '../repositories/compartment_repository.dart';
 
 import '../data/storage_unit_templates.dart';
 
@@ -13,11 +14,13 @@ import './storage_unit_screen.dart';
 class RoomScreen extends StatefulWidget {
   final Room room;
   final StorageUnitRepository storageUnitRepository;
+  final CompartmentRepository compartmentRepository;
 
   const RoomScreen({
     super.key,
     required this.room,
     required this.storageUnitRepository,
+    required this.compartmentRepository,
   });
 
   @override
@@ -141,6 +144,7 @@ class _RoomScreenState extends State<RoomScreen> {
                     MaterialPageRoute(
                       builder: (context) => StorageUnitScreen(
                         storageUnit: roomStorageUnit,
+                        compartmentRepository: widget.compartmentRepository,
                         ),
                       ),
                   );
