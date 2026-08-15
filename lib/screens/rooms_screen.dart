@@ -30,24 +30,26 @@ class RoomScreen extends StatefulWidget {
 class _RoomScreenState extends State<RoomScreen> {
   final TextEditingController _storageUnitNameController = TextEditingController();
 
-  void _createStorageUnitFromTemplate(StorageUnitTemplate template) {
+  void _createStorageUnitFromTemplate(StorageUnitTemplate template) async {
     final name = _storageUnitNameController.text.trim();
 
     if  (name.isEmpty) {
       return;
     }
 
-    setState(() {
-      widget.storageUnitRepository.addStorageUnit(
-        StorageUnit(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: name,
-          type: template.id,
-          icon: template.icon,
-          roomId: widget.room.id,
-        ),
-      );
-    });
+    final storageUnit = StorageUnit(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
+      type: template.id,
+      icon: template.icon,
+      roomId: widget.room.id,
+    );
+
+    await widget.storageUnitRepository.addStorageUnit(storageUnit);
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _showStorageUnitNameDialog(StorageUnitTemplate template) {

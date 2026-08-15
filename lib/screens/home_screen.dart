@@ -16,6 +16,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final roomRepository = RoomRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+  Future<void> _loadData() async {
+    await roomRepository.loadRooms();
+    await storageUnitRepository.loadStorageUnits();
+    await compartmentRepository.loadCompartments();
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
   final storageUnitRepository = StorageUnitRepository();
   final compartmentRepository = CompartmentRepository();
   final TextEditingController _roomNameController = TextEditingController();
