@@ -114,6 +114,59 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  void _showEditRoomDialog(Room room) {
+    final controller = TextEditingController(
+      text: room.name,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit room'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Room name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newName = controller.text.trim();
+
+                if (newName.isEmpty) {
+                  return;
+                }
+
+                await roomRepository.updateRoom(
+                  room.id,
+                  newName,
+                );
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+
+                if (mounted) {
+                  setState(() {});
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,6 +202,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        _showEditRoomDialog(room);
+                      },
+                      ),
                     IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () async {

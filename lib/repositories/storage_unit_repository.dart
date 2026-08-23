@@ -73,6 +73,28 @@ class StorageUnitRepository {
     await saveStorageUnits();
   }
 
+  Future<void> updateStorageUnit(String id, String newName,) async {
+    final index = storageUnits.indexWhere(
+      (storageUnit) => storageUnit.id == id,
+    );
+
+    if (index == -1) {
+      return;
+    }
+
+    final storageUnit = storageUnits[index];
+    
+    storageUnits[index] = StorageUnit(
+      id: storageUnit.id,
+      name: newName,
+      type: storageUnit.type,
+      icon: storageUnit.icon,
+      roomId: storageUnit.roomId,
+    );
+
+    await saveStorageUnits();
+  }
+
   Future<void> deleteStorageUnit(String id) async {
     storageUnits.removeWhere(
       (storageUnit) => storageUnit.id == id,

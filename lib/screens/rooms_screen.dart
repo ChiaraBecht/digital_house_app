@@ -116,6 +116,59 @@ class _RoomScreenState extends State<RoomScreen> {
     );
   }
 
+  void _showEditStorageUnitDialog(StorageUnit storageUnit) {
+    final controller = TextEditingController(
+      text: storageUnit.name,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit storage unit'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Storage unit name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newName = controller.text.trim();
+
+                if (newName.isEmpty) {
+                  return;
+                }
+
+                await widget.storageUnitRepository.updateStorageUnit(
+                  storageUnit.id,
+                  newName,
+                );
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+
+                if (mounted) {
+                  setState(() {});
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final roomStorageUnits = widget.storageUnitRepository.storageUnits
@@ -142,6 +195,12 @@ class _RoomScreenState extends State<RoomScreen> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        _showEditStorageUnitDialog(roomStorageUnit);
+                      },
+                    ),
                     IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () async {

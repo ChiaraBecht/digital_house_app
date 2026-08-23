@@ -66,6 +66,27 @@ class RoomRepository {
   await saveRooms();
   }
 
+  Future<void> updateRoom(String id, String newName) async {
+    final index = rooms.indexWhere(
+      (room) => room.id == id,
+    );
+
+    if (index == -1) {
+      return;
+    }
+    
+    final room = rooms[index];
+
+    rooms[index] = Room(
+      id: room.id,
+      name: newName,
+      type: room.type,
+      icon: room.icon,
+    );
+
+    await saveRooms();
+  }
+
   Future<void> deleteRoom(String id) async {
     rooms.removeWhere(
       (room) => room.id == id,

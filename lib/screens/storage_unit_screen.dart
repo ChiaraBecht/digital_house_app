@@ -1,6 +1,7 @@
 import 'package:digital_house/repositories/compartment_repository.dart';
 import 'package:flutter/material.dart';
 import '../models/storage_unit.dart';
+import '../models/compartment.dart';
 
 class StorageUnitScreen extends StatefulWidget {
   final StorageUnit storageUnit;
@@ -17,6 +18,58 @@ class StorageUnitScreen extends StatefulWidget {
 }
 
 class _StorageUnitScreenState extends State<StorageUnitScreen> {
+  void _showEditCompartmentDialog(Compartment compartment) {
+    final controller = TextEditingController(
+      text: compartment.name,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit compartment'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Compartment name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newName = controller.text.trim();
+
+                if (newName.isEmpty) {
+                  return;
+                }
+
+                await widget.compartmentRepository.updateCompartment(
+                  compartment.id,
+                  newName,
+                );
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+
+                if (mounted) {
+                  setState(() {});
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final storageUnitCompartments =
@@ -54,50 +107,65 @@ class _StorageUnitScreenState extends State<StorageUnitScreen> {
 
             ...storageUnitCompartments.map(
               (compartment) => Card(
+                margin: const EdgeInsets.only(bottom: 10),
                 child: ListTile(
-                  title: Text(compartment.name),
+                  leading: const Icon(Icons.inventory_2_outlined),
+                  title: Text(compartment.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold,
+                  ),
+                  ),
                   subtitle: Text('Owner: ${compartment.owner}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () async {
-                      final shouldDelete = await showDialog<bool>(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Delete compartment?'),
-                            content: Text(
-                              'Are you sure you want to delete "${compartment.name}"?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, true);
-                                },
-                                child: const Text('Delete'),
-                              ),
-                            ],
-                          );
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          _showEditCompartmentDialog(compartment);
                         },
-                      );
-
-                      if (shouldDelete == true) {
-                        await widget.compartmentRepository.deleteCompartment(
-                          compartment.id,
+                      ),
+                      IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        final shouldDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete compartment?'),
+                              content: Text(
+                                'Are you sure you want to delete "${compartment.name}"?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
                         );
 
-                        if (mounted) {
-                          setState(() {});
+                        if (shouldDelete == true) {
+                          await widget.compartmentRepository.deleteCompartment(
+                            compartment.id,
+                          );
+
+                          if (mounted) {
+                            setState(() {});
+                          }
                         }
-                      }
-                    },
-                      
-                  )
+                      }, 
+                    ),
+                  ],
+                  ),
                 ),
               ),
             ),

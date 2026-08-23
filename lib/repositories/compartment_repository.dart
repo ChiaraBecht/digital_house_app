@@ -70,6 +70,27 @@ class CompartmentRepository {
     await saveCompartments();
   }
 
+  Future<void> updateCompartment(String id, String newName) async {
+    final index = compartments.indexWhere(
+      (compartment) => compartment.id == id,
+    );
+
+    if (index == -1) {
+      return;
+    }
+
+    final compartment = compartments[index];
+
+    compartments[index] = Compartment(
+      id: compartment.id,
+      name: newName,
+      owner: compartment.owner,
+      storageUnitId: compartment.storageUnitId,
+    );
+
+    await saveCompartments();
+  }
+
   Future<void> deleteCompartment(String id) async {
     compartments.removeWhere(
       (compartment) => compartment.id == id,
