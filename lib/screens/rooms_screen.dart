@@ -139,7 +139,66 @@ class _RoomScreenState extends State<RoomScreen> {
                   style: const TextStyle(fontSize: 28),
                 ),
                 title: Text(roomStorageUnit.name),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        final shouldDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete storage unit?'),
+                              content: Text(
+                                'Are you sure you want to delete "${roomStorageUnit.name}"?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (shouldDelete == true) {
+                          final compartmentsToDelete = widget.compartmentRepository
+                              .compartments
+                              .where(
+                                (compartment) =>
+                                    compartment.storageUnitId == roomStorageUnit.id,
+                              )
+                              .toList();
+
+                          for (final compartment in compartmentsToDelete) {
+                            await widget.compartmentRepository.deleteCompartment(
+                              compartment.id,
+                            );
+                          }
+
+                          await widget.storageUnitRepository.deleteStorageUnit(
+                            roomStorageUnit.id,
+                          );
+
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        }
+                      },
+                    ),
+                    const Icon(Icons.chevron_right),
+                  ],
+                ),
                 onTap: () {
                   Navigator.push(
                     context,

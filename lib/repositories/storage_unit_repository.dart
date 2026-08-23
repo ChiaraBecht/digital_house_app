@@ -72,5 +72,13 @@ class StorageUnitRepository {
     storageUnits.add(storageUnit);
     await saveStorageUnits();
   }
+
+  Future<void> deleteStorageUnit(String id) async {
+    storageUnits.removeWhere(
+      (storageUnit) => storageUnit.id == id,
+    );
+
+    await saveStorageUnits();
+  }
 }
 

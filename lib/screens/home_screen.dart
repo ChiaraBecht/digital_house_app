@@ -146,7 +146,76 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 title: Text(room.name),
                 subtitle: Text(room.type),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        final shouldDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete room?'),
+                              content: Text(
+                                'Are you sure you want to delete "${room.name}"?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (shouldDelete == true) {
+                          // Find all storage units beloging to this room
+                          final roomStorageUnits = storageUnitRepository.storageUnits
+                          .where(
+                            (storageUnit) => storageUnit.roomId == room.id,
+                          )
+                          .toList();
+
+                          // Delete all compartments belonging to those storage units
+                          for ( final storageUnit in roomStorageUnits) {
+                            final storageUnitCompartments = compartmentRepository.compartments
+                            .where(
+                              (compartment) =>
+                              compartment.storageUnitId == storageUnit.id,
+                            ).toList();
+
+                            for ( final compartment in storageUnitCompartments) {
+                              await compartmentRepository.deleteCompartment(
+                                compartment.id,
+                              );
+                            }
+                            // Delete the storage unit itself.
+                            await storageUnitRepository.deleteStorageUnit(
+                              storageUnit.id,
+                            );
+                          }
+                          // finally delete the room.
+                          await roomRepository.deleteRoom(room.id);
+
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        }
+                      },
+                    ),
+                    const Icon(Icons.chevron_right),
+                  ],
+                ),
                 onTap: () {
                   Navigator.push(
                     context,

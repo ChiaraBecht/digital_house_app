@@ -69,4 +69,12 @@ class CompartmentRepository {
     compartments.add(compartment);
     await saveCompartments();
   }
+
+  Future<void> deleteCompartment(String id) async {
+    compartments.removeWhere(
+      (compartment) => compartment.id == id,
+    );
+
+    await saveCompartments();
+  }
 }

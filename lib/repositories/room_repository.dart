@@ -65,4 +65,11 @@ class RoomRepository {
   rooms.add(room);
   await saveRooms();
   }
+
+  Future<void> deleteRoom(String id) async {
+    rooms.removeWhere(
+      (room) => room.id == id,
+    );
+    await saveRooms();
+  }
 }
