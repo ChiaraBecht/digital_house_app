@@ -70,6 +70,62 @@ class _StorageUnitScreenState extends State<StorageUnitScreen> {
       },
     );
   }
+
+  void _showAddCompartmentDialog() {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add compartment'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              labelText: 'Compartment name',
+            ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final name = controller.text.trim();
+                  
+                  if (name.isEmpty) {
+                    return;
+                  }
+                  final compartment = Compartment(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: name,
+                    owner: 'All',
+                    storageUnitId: widget.storageUnit.id,
+                  );
+                  
+                  await widget.compartmentRepository.addCompartment(
+                    compartment
+                    );
+
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+
+                    if (mounted) {
+                      setState(() {});
+                    }
+                },
+                child: const Text('Add'),
+                ),
+            ],
+          );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final storageUnitCompartments =
@@ -171,6 +227,10 @@ class _StorageUnitScreenState extends State<StorageUnitScreen> {
             ),
           ],
         )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddCompartmentDialog,
+        child: const Icon(Icons.add),
       ),
       );
   }
