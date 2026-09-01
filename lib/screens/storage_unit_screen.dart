@@ -1,16 +1,20 @@
 import 'package:digital_house/repositories/compartment_repository.dart';
+import 'package:digital_house/repositories/item_repository.dart';
 import 'package:flutter/material.dart';
 import '../models/storage_unit.dart';
 import '../models/compartment.dart';
+import '../screens/compartment_screen.dart';
 
 class StorageUnitScreen extends StatefulWidget {
   final StorageUnit storageUnit;
   final CompartmentRepository compartmentRepository;
+  final ItemRepository itemRepository;
 
   const StorageUnitScreen({
     super.key,
     required this.storageUnit,
     required this.compartmentRepository,
+    required this.itemRepository,
   });
 
   @override
@@ -171,6 +175,17 @@ class _StorageUnitScreenState extends State<StorageUnitScreen> {
                   ),
                   ),
                   subtitle: Text('Owner: ${compartment.owner}'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CompartmentScreen(
+                          compartment: compartment,
+                          itemRepository: widget.itemRepository,
+                        ),
+                      ),
+                    );
+                  },
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
